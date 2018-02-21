@@ -722,7 +722,7 @@ public class PolyThread2 extends Thread {
             } else if (image2.exists()&&!image3.exists()&&!image4.exists()) {
                 boom = HStack(boom,ImageIO.read(image2));
             }
-        } catch (IOException ex) {
+        } catch (IOException | java.lang.IndexOutOfBoundsException ex) {
             Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
         }
         int next = series+1;
@@ -791,9 +791,14 @@ public class PolyThread extends Thread {
         } catch (IOException ex) {
             Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
         }
+        try
+        {
+
         if (records.size()>1) {
             for (int i = 1; i< records.size() ; i++) {
-                String poly = records.get(i).get(92);
+                CSVRecord record = records.get(i);
+                int recordSize = record.size();
+                String poly = record.get(recordSize-1);
                 poly = poly.substring(1, poly.length()-1);
                 String[] coords = poly.split(":");
                 int fia = (int) Math.round(Float.parseFloat(coords[0]));
@@ -814,7 +819,7 @@ public class PolyThread extends Thread {
             for (int i = 0; i<2048; i=i+256)
                 for (int j = 0; j <2048 ; j=j+256) {
                     int tilex = (tileminx+i)/256;
-                    int tiley = (tileminy+j)/256;       
+                    int tiley = (tileminy+j)/256;
                     BufferedImage bb = boom.getSubimage(tilex, tiley, 256, 256);
                     try {
                         //System.out.println(src+"  "+);
@@ -824,6 +829,11 @@ public class PolyThread extends Thread {
                     }
                     bb.flush();
                 }
+        }
+        }
+        catch(ArrayIndexOutOfBoundsException ex)
+        {
+            Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
         }
             
             /*
