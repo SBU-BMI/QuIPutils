@@ -78,12 +78,13 @@ public class CustomTiler {
   private String dest = "";
   private String name = "";
   private boolean init = false;
+  private int numthreads = Runtime.getRuntime().availableProcessors();
   
   public CustomTiler(String src, String dest, String name, int tileSizeX, int tileSizeY) {
       this.dest = dest;
       this.src = src;
       this.name = name;
-      sema = new Semaphore(Runtime.getRuntime().availableProcessors());
+      sema = new Semaphore(numthreads);
       start = System.nanoTime();   
   }
   
@@ -583,9 +584,11 @@ public void GeneratePyramidTiles() throws FormatException, IOException, Dependen
 
 public void iCheck(File file, int tx, int ty) throws IOException {
     if (!file.exists()) {
+        //System.out.println(file.toString()+" "+tx+" "+ty);
         BufferedImage boom = new BufferedImage(tx, ty, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = boom.createGraphics();
         g.setColor(new Color(255,255,255,0));
+        //g.setColor(new Color(255,83,21,255));
         g.fillRect(0, 0, tx, ty);
         ImageIO.write(boom, "png", file);
     }
@@ -593,60 +596,45 @@ public void iCheck(File file, int tx, int ty) throws IOException {
 
 public void GeneratePyramidTiles3() throws FormatException, IOException, DependencyException, ServiceException, InterruptedException {
     for (int series=0; series<6; series++) {
-            int width = (int) (this.width/Math.pow(2.0, series));
-            int height = (int) (this.height/Math.pow(2.0, series));
-            int nXTiles = width / tileSizeX;
-            int nYTiles = height / tileSizeY;
-            if (nXTiles * tileSizeX != width) nXTiles++;
-            if (nYTiles * tileSizeY != height) nYTiles++;
-            for (int y=0; y<nYTiles; y=y+2) {
-                System.out.println(y);
-                for (int x=0; x<nXTiles; x=x+2) {
-                    sema.acquire();
-                    new PolyThread2(series,x,y).start();
-                }
-            }
-    }
-}
-
-public void GeneratePyramidTiles4() throws FormatException, IOException, DependencyException, ServiceException {
-    for (int series=0; series<6; series++) {
-            int width = (int) (this.width/Math.pow(2.0, series));
-            int height = (int) (this.height/Math.pow(2.0, series));
-            int nXTiles = width / tileSizeX;
-            int nYTiles = height / tileSizeY;
-            if (nXTiles * tileSizeX != width) nXTiles++;
-            if (nYTiles * tileSizeY != height) nYTiles++;
-            for (int y=0; y<nYTiles; y=y+2) {
-                System.out.println(y);
-                for (int x=0; x<nXTiles; x=x+2) {
-                    //System.out.println(dest+"\\"+name+"-"+series+"-"+x+"-"+y+".png");
-                    File image1 = new File(dest+"\\"+name+"-"+series+"-"+x+"-"+y+".png");
-                    File image2 = new File(dest+"\\"+name+"-"+series+"-"+x+1+"-"+y+".png");
-                    File image3 = new File(dest+"\\"+name+"-"+series+"-"+x+"-"+y+1+".png");
-                    File image4 = new File(dest+"\\"+name+"-"+series+"-"+x+1+"-"+y+1+".png");
+        while (sema.availablePermits()!=numthreads) {
+            // wait until prior resolution finished since next scale depends on it
+        }
+        int width = (int) (this.width/Math.pow(2.0, series));
+        int height = (int) (this.height/Math.pow(2.0, series));
+        int nXTiles = width / tileSizeX;
+        int nYTiles = height / tileSizeY;
+        if (nXTiles * tileSizeX != width) nXTiles++;
+        if (nYTiles * tileSizeY != height) nYTiles++;
+        for (int y=0; y<nYTiles; y=y+2) {
+            System.out.println(y);
+            for (int x=0; x<nXTiles; x=x+2) {
+                File image1 = new File(dest+"\\"+name+"-"+series+"-"+x+"-"+y+".png");
+                File image2 = new File(dest+"\\"+name+"-"+series+"-"+((int)(x+1))+"-"+y+".png");
+                File image3 = new File(dest+"\\"+name+"-"+series+"-"+x+"-"+((int)(y+1))+".png");
+                File image4 = new File(dest+"\\"+name+"-"+series+"-"+((int)(x+1))+"-"+((int)(y+1))+".png");
+                try {
                     iCheck(image1,tileSizeX, tileSizeY);
-                    iCheck(image2,tileSizeX, tileSizeY);
-                    iCheck(image3,tileSizeX, tileSizeY);
-                    iCheck(image4,tileSizeX, tileSizeY);
-                    BufferedImage boom = ImageIO.read(image1);
-                    if (image2.exists()&&image3.exists()&&image4.exists()) {
-                        boom = QuadStack(boom,ImageIO.read(image2),ImageIO.read(image3),ImageIO.read(image4));
-                    } else if (!image2.exists()&&image3.exists()&&!image4.exists()) {
-                        boom = VStack(boom,ImageIO.read(image3));
-                    } else if (image2.exists()&&!image3.exists()&&!image4.exists()) {
-                        boom = HStack(boom,ImageIO.read(image2));
+                    if (x+1<nXTiles) {
+                        iCheck(image2,tileSizeX, tileSizeY);
                     }
-                    int next = series+1;
-                    File newfile = new File(dest+"\\"+name+"-"+next+"-"+x/2+"-"+y/2+".png");
-                    if (!newfile.exists()) {
-                        newfile.delete();
+                    if (y+1<nYTiles) {
+                        iCheck(image3,tileSizeX, tileSizeY);
                     }
-                    ImageIO.write(scale(boom,0.5), "png", newfile);
-                    boom.flush();
+                    if ((x+1<nXTiles)&&(y+1<nYTiles)) {
+                        iCheck(image4,tileSizeX, tileSizeY);
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                
+                
+                
+                
+                sema.acquire();
+                new PolyThread2(series,x,y).start();
             }
         }
+    }
 }
   
   private void cleanup() {
@@ -704,14 +692,6 @@ public class PolyThread2 extends Thread {
         File image2 = new File(dest+"\\"+name+"-"+series+"-"+((int)(x+1))+"-"+y+".png");
         File image3 = new File(dest+"\\"+name+"-"+series+"-"+x+"-"+((int)(y+1))+".png");
         File image4 = new File(dest+"\\"+name+"-"+series+"-"+((int)(x+1))+"-"+((int)(y+1))+".png");
-        try {
-            iCheck(image1,tileSizeX, tileSizeY);
-            iCheck(image2,tileSizeX, tileSizeY);
-            iCheck(image3,tileSizeX, tileSizeY);
-            iCheck(image4,tileSizeX, tileSizeY);
-        } catch (IOException ex) {
-            Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
-        }
         BufferedImage boom = null;
         try {
             boom = ImageIO.read(image1);
@@ -724,6 +704,10 @@ public class PolyThread2 extends Thread {
             }
         } catch (IOException | java.lang.IndexOutOfBoundsException ex) {
             Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("image1 "+image1.toString());
+            System.out.println("image2 "+image2.toString());
+            System.out.println("image3 "+image3.toString());
+            System.out.println("image4 "+image4.toString());
         }
         int next = series+1;
         File newfile = new File(dest+"\\"+name+"-"+next+"-"+((int)(x/2))+"-"+((int)(y/2))+".png");
@@ -775,7 +759,8 @@ public class PolyThread extends Thread {
         }
         oreader.setMetadataStore(omexml);
         try {
-            oreader.setId("D:\\tiles\\raw\\TCGA-44-3398-01Z-00-DX1.74757c91-a0c6-4e7f-b2db-8748c68ffa44.svs");
+            //oreader.setId("D:\\tiles\\raw\\TCGA-44-3398-01Z-00-DX1.74757c91-a0c6-4e7f-b2db-8748c68ffa44.svs");
+            oreader.setId("D:\\tiles\\raw\\TCGA-44-A47B-01Z-00-DX1.177D0531-E037-435B-BFD4-382B2150B10D.svs");
         } catch (FormatException ex) {
             Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -797,12 +782,13 @@ public class PolyThread extends Thread {
         }
         width = Integer.parseInt(records.get(0).get("image_width"));
         height = Integer.parseInt(records.get(0).get("image_height"));
+        
         tx = Integer.parseInt(records.get(0).get("tile_width"));
         ty = Integer.parseInt(records.get(0).get("tile_height"));
         tileminx = Integer.parseInt(records.get(0).get("tile_minx"));
         tileminy = Integer.parseInt(records.get(0).get("tile_miny"));
-        
-       /*
+        //System.out.println(tx+" "+ty);
+       
         int tilePlaneSize = tileSizeX * tileSizeY * oreader.getRGBChannelCount() * bpp;
         byte[] buf = new byte[tilePlaneSize];
         try {
@@ -819,9 +805,9 @@ public class PolyThread extends Thread {
             boom = AWTImageTools.makeImage(buf, false, omexml, 0);
         } catch (FormatException ex) {
             Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
+        }
         
-        BufferedImage boom = new BufferedImage(tx, ty, BufferedImage.TYPE_INT_ARGB);
+        //BufferedImage boom = new BufferedImage(tx, ty, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = boom.createGraphics();
         g.setColor(new Color(255,255,255,0));
         g.fillRect(0, 0, tx, ty);
@@ -864,11 +850,20 @@ public class PolyThread extends Thread {
                 p.lineTo(ia,ib);
                 g.draw(p);
             }
-            for (int i = 0; i<2048; i=i+256)
-                for (int j = 0; j <2048 ; j=j+256) {
+            for (int i = 0; i<tx; i=i+256)
+                for (int j = 0; j <ty ; j=j+256) {
                     int tilex = (tileminx+i)/256;
                     int tiley = (tileminy+j)/256;
-                    BufferedImage bb = boom.getSubimage(i, j, 256, 256);
+                    //System.out.println(i+" "+j);
+                    int effx = 256;
+                    int effy = 256;
+                    if ((i+256)>tx) {
+                        effx = tx-i;
+                    }
+                    if ((j+256)>ty) {
+                        effy = ty-j;
+                    }
+                    BufferedImage bb = boom.getSubimage(i, j, effx, effy);
                     try {
                         //System.out.println(src+"  "+);
                         ImageIO.write(bb,"png",new File(dest+"\\"+name+"-0-"+tilex+"-"+tiley+".png"));
@@ -967,7 +962,8 @@ public class PolyThread extends Thread {
 
   public static void main(String[] args) throws IOException, InterruptedException {
     loci.common.DebugTools.setRootLevel("WARN");   
-    CustomTiler csvtiler = new CustomTiler("D:\\tiles\\csv\\","D:\\tiles\\","TCGA-44-3398-01Z-00-DX1",256,256);
+    //CustomTiler csvtiler = new CustomTiler("D:\\tiles\\csv\\","D:\\tiles\\","TCGA-44-3398-01Z-00-DX1",256,256);
+    CustomTiler csvtiler = new CustomTiler("D:\\tiles\\csv2\\","D:\\tiles\\","TCGA-44-A47B-01Z-00-DX1.177D0531-E037-435B-BFD4-382B2150B10D",256,256);
     csvtiler.cvstiler();
   }
 }
