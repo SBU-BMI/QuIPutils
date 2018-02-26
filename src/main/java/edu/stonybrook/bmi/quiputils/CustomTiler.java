@@ -34,6 +34,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -82,7 +83,10 @@ public class CustomTiler {
     private String name = "";
     private boolean init = false;
     private int numthreads = Runtime.getRuntime().availableProcessors();
+    private static String fileSep = System.getProperty("file.separator");
+    private static String userHome = System.getProperty("user.home");
     private static Color lineColor;
+    private static String svsFilePath;
 
     public CustomTiler(String src, String dest, String name, int tileSizeX, int tileSizeY) {
         this.dest = dest;
@@ -230,6 +234,7 @@ public class CustomTiler {
                         }
                     }
                     */
+                        // TODO: replace D: with userHome
                         //ImageIO.write(boom,"png",new BufferedOutputStream(new FileOutputStream(new File("d:\\booga\\saved-"+series+"-"+x+"-"+y+".png"))));
                         String ffn = "d:\\booga\\saved-" + series + "-" + x + "-" + y + ".png";
                         sema.acquire();
@@ -248,6 +253,7 @@ public class CustomTiler {
                     /*
                     if (ffn.length()>4000) {
                         PngImage pi = new PngImage(fn,"none");
+                        // TODO: replace D: with userHome
                         String ofn = "d:\\booga\\min-"+series+"-"+x+"-"+y+".png";
                         PngOptimizer optimizer = new PngOptimizer("none");
                         optimizer.setCompressor("zopfli", 1);
@@ -397,7 +403,7 @@ public class CustomTiler {
                             g.draw(p);
                         }
                         if (bad) numbad++;
-                        String ffn = path + "\\" + src + "\\" + src + "-" + series + "-" + x + "-" + y + ".png";
+                        String ffn = path + fileSep + src + fileSep + src + "-" + series + "-" + x + "-" + y + ".png";
                         sema.acquire();
                         (new Thread() {
                             public void run() {
@@ -416,6 +422,7 @@ public class CustomTiler {
                     
                     
                     /*
+                    // TODO: replace D: with userHome
                     String fn = "d:\\booga\\saved-"+series+"-"+x+"-"+y+".png";
                     File ffn = new File(fn);
                     ImageIO.write( boom, "png",ffn);
@@ -481,7 +488,7 @@ public class CustomTiler {
     }
 
     public File TileFile(int series, int x, int y) {
-        return new File(path + "\\" + src + "\\" + src + "-" + series + "-" + x + "-" + y + ".png");
+        return new File(path + fileSep + src + fileSep + src + "-" + series + "-" + x + "-" + y + ".png");
     }
 
     public void GeneratePyramidTiles2() throws DependencyException, ServiceException, IOException {
@@ -497,7 +504,7 @@ public class CustomTiler {
         for (int series = 0; series < reader.getSeriesCount(); series++) {
             reader.setSeries(series);
             if (reader.getImageCount() > 1) {
-                System.out.println("UNEXECTED NUMBER OF IMAGES!!!! " + reader.getImageCount());
+                System.out.println("UNEXPECTED NUMBER OF IMAGES!!!! " + reader.getImageCount());
             }
             for (int image = 0; image < reader.getImageCount(); image++) {
                 int width = (int) (reader.getSizeX() / Math.pow(2.0, series));
@@ -548,7 +555,7 @@ public class CustomTiler {
         //for (int series=0; series<reader.getSeriesCount()-1; series++) {
         for (int series = 0; series < 6; series++) {
             if (reader.getImageCount() > 1) {
-                System.out.println("UNEXECTED NUMBER OF IMAGES!!!! " + reader.getImageCount());
+                System.out.println("UNEXPECTED NUMBER OF IMAGES!!!! " + reader.getImageCount());
             }
             for (int image = 0; image < reader.getImageCount(); image++) {
                 int width = (int) (reader.getSizeX() / Math.pow(2.0, series));
@@ -620,10 +627,10 @@ public class CustomTiler {
             for (int y = 0; y < nYTiles; y = y + 2) {
                 System.out.println(y);
                 for (int x = 0; x < nXTiles; x = x + 2) {
-                    File image1 = new File(dest + "\\" + name + "-" + series + "-" + x + "-" + y + ".png");
-                    File image2 = new File(dest + "\\" + name + "-" + series + "-" + ((int) (x + 1)) + "-" + y + ".png");
-                    File image3 = new File(dest + "\\" + name + "-" + series + "-" + x + "-" + ((int) (y + 1)) + ".png");
-                    File image4 = new File(dest + "\\" + name + "-" + series + "-" + ((int) (x + 1)) + "-" + ((int) (y + 1)) + ".png");
+                    File image1 = new File(dest + fileSep + name + "-" + series + "-" + x + "-" + y + ".png");
+                    File image2 = new File(dest + fileSep + name + "-" + series + "-" + ((int) (x + 1)) + "-" + y + ".png");
+                    File image3 = new File(dest + fileSep + name + "-" + series + "-" + x + "-" + ((int) (y + 1)) + ".png");
+                    File image4 = new File(dest + fileSep + name + "-" + series + "-" + ((int) (x + 1)) + "-" + ((int) (y + 1)) + ".png");
                     try {
                         iCheck(image1, tileSizeX, tileSizeY);
                         if (x + 1 < nXTiles) {
@@ -649,12 +656,17 @@ public class CustomTiler {
 
     private void cleanup() {
         try {
-            reader.close();
+            if (reader != null) {
+                reader.close();
+            }
         } catch (IOException e) {
             System.err.println("Failed to close reader.");
         }
+
         try {
-            writer.close();
+            if (writer != null) {
+                writer.close();
+            }
         } catch (IOException e) {
             System.err.println("Failed to close writer.");
         }
@@ -664,6 +676,7 @@ public class CustomTiler {
     public void mongotiler() throws IOException, DependencyException, FormatException, ServiceException, InterruptedException {
         int tileSizeX = 256;
         int tileSizeY = 256;
+        // TODO: replace D: with userHome
         String path = "d:\\validate\\";
         //String src = "BC_201_1_1";
         String src = "17039889";
@@ -694,11 +707,11 @@ public class CustomTiler {
 
         public void run() {
             //System.out.println("executing thread..."+x+" "+y);
-            //System.out.println(dest+"\\"+name+"-"+series+"-"+x+"-"+y+".png");
-            File image1 = new File(dest + "\\" + name + "-" + series + "-" + x + "-" + y + ".png");
-            File image2 = new File(dest + "\\" + name + "-" + series + "-" + ((int) (x + 1)) + "-" + y + ".png");
-            File image3 = new File(dest + "\\" + name + "-" + series + "-" + x + "-" + ((int) (y + 1)) + ".png");
-            File image4 = new File(dest + "\\" + name + "-" + series + "-" + ((int) (x + 1)) + "-" + ((int) (y + 1)) + ".png");
+            //System.out.println(dest+fileSep+name+"-"+series+"-"+x+"-"+y+".png");
+            File image1 = new File(dest + fileSep + name + "-" + series + "-" + x + "-" + y + ".png");
+            File image2 = new File(dest + fileSep + name + "-" + series + "-" + ((int) (x + 1)) + "-" + y + ".png");
+            File image3 = new File(dest + fileSep + name + "-" + series + "-" + x + "-" + ((int) (y + 1)) + ".png");
+            File image4 = new File(dest + fileSep + name + "-" + series + "-" + ((int) (x + 1)) + "-" + ((int) (y + 1)) + ".png");
             BufferedImage boom = null;
             try {
                 boom = ImageIO.read(image1);
@@ -717,7 +730,7 @@ public class CustomTiler {
                 System.out.println("image4 " + image4.toString());
             }
             int next = series + 1;
-            File newfile = new File(dest + "\\" + name + "-" + next + "-" + ((int) (x / 2)) + "-" + ((int) (y / 2)) + ".png");
+            File newfile = new File(dest + fileSep + name + "-" + next + "-" + ((int) (x / 2)) + "-" + ((int) (y / 2)) + ".png");
             if (!newfile.exists()) {
                 newfile.delete();
             }
@@ -765,8 +778,7 @@ public class CustomTiler {
             }
             oreader.setMetadataStore(omexml);
             try {
-                //oreader.setId("D:\\tiles\\raw\\TCGA-44-3398-01Z-00-DX1.74757c91-a0c6-4e7f-b2db-8748c68ffa44.svs");
-                oreader.setId("D:\\tiles\\raw\\TCGA-44-A47B-01Z-00-DX1.177D0531-E037-435B-BFD4-382B2150B10D.svs");
+                oreader.setId(getSvsFilePath());
             } catch (FormatException ex) {
                 Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
@@ -781,10 +793,10 @@ public class CustomTiler {
             List<CSVRecord> records = null;
             try {
                 reader = Files.newBufferedReader(file);
-                CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withTrim());
+                CSVParser parser = getCsvParser(reader, true);
                 records = parser.getRecords();
             } catch (IOException ex) {
-                Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
+                error("**CSVRecord**", ex, true);
             }
             width = Integer.parseInt(records.get(0).get("image_width"));
             height = Integer.parseInt(records.get(0).get("image_height"));
@@ -826,10 +838,10 @@ public class CustomTiler {
             CSVParser polyparser;
             try {
                 reader2 = Files.newBufferedReader(Paths.get(polys));
-                polyparser = new CSVParser(reader2, CSVFormat.DEFAULT.withSkipHeaderRecord().withTrim());
+                polyparser = getCsvParser(reader2, false);
                 records = polyparser.getRecords();
             } catch (IOException ex) {
-                Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
+                error("COULD NOT FIND: *-features.csv", ex, true);
             }
             try {
 
@@ -871,15 +883,15 @@ public class CustomTiler {
                             BufferedImage bb = boom.getSubimage(i, j, effx, effy);
                             try {
                                 //System.out.println(src+"  "+);
-                                ImageIO.write(bb, "png", new File(dest + "\\" + name + "-0-" + tilex + "-" + tiley + ".png"));
+                                ImageIO.write(bb, "png", new File(dest + fileSep + name + "-0-" + tilex + "-" + tiley + ".png"));
                             } catch (IOException ex) {
-                                Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
+                                error("IMAGE-WRITING FAILED", ex, false);
                             }
                             bb.flush();
                         }
                 }
             } catch (ArrayIndexOutOfBoundsException ex) {
-                Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
+                error("**BOUNDS ISSUE**", ex, false);
             }
             
             /*
@@ -906,7 +918,7 @@ public class CustomTiler {
                         p.lineTo(ia,ib);
                         g.draw(p);
                     }
-                    String ffn = path+"\\"+src+"\\"+src+"-0-"+x+"-"+y+".png";
+                    String ffn = path+fileSep+src+fileSep+src+"-0-"+x+"-"+y+".png";
                     sema.acquire();
                     (new Thread() {
                         public void run() {
@@ -935,23 +947,29 @@ public class CustomTiler {
     }
 
     public void cvstiler() throws IOException, InterruptedException {
+        String strGlob = "*-algmeta.{csv}";
         DirectoryStream<Path> stream;
         Path dir = Paths.get(src);
-        stream = Files.newDirectoryStream(dir, "*-algmeta.{csv}");
+        stream = Files.newDirectoryStream(dir, strGlob);
         Reader reader = null;
         List<CSVRecord> records = null;
-        Path pp = stream.iterator().next();
+        Path pp = null;
+        try {
+            pp = stream.iterator().next();
+        } catch (NoSuchElementException e) {
+            error("COULD NOT FIND: " + strGlob, e, true);
+        }
         try {
             reader = Files.newBufferedReader(pp);
-            CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withTrim());
+            CSVParser parser = getCsvParser(reader, true);
             records = parser.getRecords();
         } catch (IOException ex) {
-            Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
+            error("**CSVRecord-2**", ex, false);
         }
         width = Integer.parseInt(records.get(0).get("image_width"));
         height = Integer.parseInt(records.get(0).get("image_height"));
         System.out.println(width + " " + height);
-        stream = Files.newDirectoryStream(dir, "*-algmeta.{csv}");
+        stream = Files.newDirectoryStream(dir, strGlob);
         for (Path p : stream) {
             sema.acquire();
             new PolyThread(p).start();
@@ -959,8 +977,47 @@ public class CustomTiler {
         try {
             GeneratePyramidTiles3();
         } catch (FormatException | DependencyException | ServiceException ex) {
-            Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
+            error("**GeneratePyramidTiles**", ex, false);
         }
+        double delta = (double) System.nanoTime() - start;
+        delta = delta / 1000000000d;
+        System.out.println("Time : " + String.valueOf(delta));
+    }
+
+    public void error(String message, Exception ex, boolean end) {
+        System.out.println(this.src + "\n" + dest + "\n" + name + "\t" + tileSizeX + "\t" + tileSizeY);
+        Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, message, ex);
+        if (end) {
+            System.exit(1);
+        }
+    }
+
+    public static void testPath(String pathToFile) {
+        try {
+            Files.newDirectoryStream(Paths.get(pathToFile));
+        } catch (Exception ex) {
+            System.out.println("DIRECTORY DOES NOT EXIST: " + pathToFile);
+            System.exit(1);
+        }
+    }
+
+    private static CSVParser getCsvParser(Reader reader, boolean hasHeader) throws IOException {
+        CSVParser csvParser;
+
+        if (hasHeader) {
+            csvParser = new CSVParser(reader, CSVFormat.DEFAULT
+                    .withFirstRecordAsHeader()
+                    .withIgnoreHeaderCase()
+                    .withTrim());
+
+        } else {
+            csvParser = new CSVParser(reader, CSVFormat.DEFAULT
+                    .withSkipHeaderRecord()
+                    .withTrim());
+        }
+
+        return csvParser;
+
     }
 
     private void setColor(int color) {
@@ -968,11 +1025,47 @@ public class CustomTiler {
         System.out.println("color: " + this.lineColor);
     }
 
+    public String getSvsFilePath() {
+        return svsFilePath;
+    }
+
+    public void setSvsFilePath(String svsFilePath) {
+        this.svsFilePath = svsFilePath;
+    }
+
     public static void main(String[] args) {
         loci.common.DebugTools.setRootLevel("WARN");
-        //CustomTiler csvtiler = new CustomTiler("D:\\tiles\\csv\\","D:\\tiles\\","TCGA-44-3398-01Z-00-DX1",256,256);
-        CustomTiler csvtiler = new CustomTiler("D:\\tiles\\csv2\\", "D:\\tiles\\", "TCGA-44-A47B-01Z-00-DX1.177D0531-E037-435B-BFD4-382B2150B10D", 256, 256);
-        csvtiler.setColor(0); //default blue
+
+        // NOTE: usage: CustomTiler inputDir, outputDir, svsFilePath, imgName, color [int]
+        String inputDir = null;
+        String outputDir = null;
+        String imgName = null;
+        String svsFilePath = null;
+        int color = 0; //default blue
+
+        if (args.length == 0) {
+            // Hard-code it here, if you must...
+            inputDir = "D:\\tiles\\csv2\\";
+            outputDir = "D:\\tiles\\";
+            svsFilePath = "D:\\tiles\\raw\\TCGA-44-A47B-01Z-00-DX1.177D0531-E037-435B-BFD4-382B2150B10D.svs";
+            imgName = "TCGA-44-A47B-01Z-00-DX1.177D0531-E037-435B-BFD4-382B2150B10D";
+
+        } else {
+            inputDir = args[0];
+            outputDir = args[1];
+            svsFilePath = args[2];
+            imgName = args[3];
+            color = Integer.parseInt(args[4]);
+
+        }
+
+        testPath(inputDir);
+        testPath(outputDir);
+
+        int tileSizeX = 256, tileSizeY = 256;
+        CustomTiler csvtiler = new CustomTiler(inputDir, outputDir, imgName, tileSizeX, tileSizeY);
+        csvtiler.setSvsFilePath(svsFilePath);
+        csvtiler.setColor(color);
         try {
             csvtiler.cvstiler();
         } catch (IOException e) {
