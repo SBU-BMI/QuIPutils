@@ -87,6 +87,8 @@ public class CustomTiler {
         this.dest = dest;
         this.src = src;
         this.name = name;
+        this.tileSizeX = tileSizeX;
+        this.tileSizeY = tileSizeY;
         sema = new Semaphore(numthreads);
         start = System.nanoTime();
     }
