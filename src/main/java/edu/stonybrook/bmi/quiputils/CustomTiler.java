@@ -82,6 +82,7 @@ public class CustomTiler {
     private String name = "";
     private boolean init = false;
     private int numthreads = Runtime.getRuntime().availableProcessors();
+    private static Color lineColor;
 
     public CustomTiler(String src, String dest, String name, int tileSizeX, int tileSizeY) {
         this.dest = dest;
@@ -337,12 +338,12 @@ public class CustomTiler {
                         Graphics2D g = boom.createGraphics();
                         g.setColor(new Color(255, 255, 255, 0));
                         g.fillRect(0, 0, effTileSizeX, effTileSizeY);
-                        g.setColor(new Color(0, 0, 255, 255));
+                        g.setColor(lineColor);
                         Path2D p;
                         boolean bad = false;
                         while (cursor.hasNext()) {
                             numpoly++;
-                            g.setColor(new Color(0, 0, 255, 255));
+                            g.setColor(lineColor);
                             Document d = (Document) cursor.next();
                             //System.out.println(d.toJson(new JsonWriterSettings(JsonMode.SHELL, true)));
                             //String wow = (String) d.get("geometry");
@@ -358,25 +359,25 @@ public class CustomTiler {
                             if (ia > maxx) {
                                 maxx = ia;
                                 //System.out.println(geo.get("coordinates").toString());
-                                g.setColor(new Color(0, 255, 0, 255));
+                                g.setColor(lineColor);
                                 bad = true;
                             }
                             if (ia < minx) {
                                 minx = ia;
                                 //System.out.println(geo.get("coordinates").toString());
-                                g.setColor(new Color(0, 255, 0, 255));
+                                g.setColor(lineColor);
                                 bad = true;
                             }
                             if (ib > maxy) {
                                 maxy = ib;
                                 //System.out.println(geo.get("coordinates").toString());
-                                g.setColor(new Color(0, 255, 0, 255));
+                                g.setColor(lineColor);
                                 bad = true;
                             }
                             if (ib < miny) {
                                 miny = ib;
                                 //System.out.println(geo.get("coordinates").toString());
-                                g.setColor(new Color(0, 255, 0, 255));
+                                g.setColor(lineColor);
                                 bad = true;
                             }
                             p = new Path2D.Double();
@@ -816,9 +817,9 @@ public class CustomTiler {
             Graphics2D g = boom.createGraphics();
             g.setColor(new Color(255, 255, 255, 0));
             g.fillRect(0, 0, tx, ty);
-            g.setColor(new Color(0, 0, 255, 255));
+            g.setColor(lineColor);
             Path2D p = new Path2D.Double();
-            g.setColor(new Color(0, 0, 255, 255));
+            g.setColor(lineColor);
             String polys = file.toString();
             polys = polys.substring(0, polys.length() - 12) + "-features.csv";
             Reader reader2;
@@ -962,10 +963,16 @@ public class CustomTiler {
         }
     }
 
+    private void setColor(int color) {
+        this.lineColor = new ColorHelper().getColor(color);
+        System.out.println("color: " + this.lineColor);
+    }
+
     public static void main(String[] args) {
         loci.common.DebugTools.setRootLevel("WARN");
         //CustomTiler csvtiler = new CustomTiler("D:\\tiles\\csv\\","D:\\tiles\\","TCGA-44-3398-01Z-00-DX1",256,256);
         CustomTiler csvtiler = new CustomTiler("D:\\tiles\\csv2\\", "D:\\tiles\\", "TCGA-44-A47B-01Z-00-DX1.177D0531-E037-435B-BFD4-382B2150B10D", 256, 256);
+        csvtiler.setColor(0); //default blue
         try {
             csvtiler.cvstiler();
         } catch (IOException e) {
