@@ -960,10 +960,16 @@ public class CustomTiler {
         }
     }
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) {
         loci.common.DebugTools.setRootLevel("WARN");
         //CustomTiler csvtiler = new CustomTiler("D:\\tiles\\csv\\","D:\\tiles\\","TCGA-44-3398-01Z-00-DX1",256,256);
         CustomTiler csvtiler = new CustomTiler("D:\\tiles\\csv2\\", "D:\\tiles\\", "TCGA-44-A47B-01Z-00-DX1.177D0531-E037-435B-BFD4-382B2150B10D", 256, 256);
-        csvtiler.cvstiler();
+        try {
+            csvtiler.cvstiler();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
