@@ -64,7 +64,7 @@ public class CustomTiler {
 
     private ImageReader reader;
     private TiffWriter writer;
-    private BufferedImageWriter biwriter;
+    //private BufferedImageWriter biwriter;
     private String inputFile;
     private String outputFile;
     private int tileSizeX = 256;
@@ -81,10 +81,9 @@ public class CustomTiler {
     private String src = "";
     private String dest = "";
     private String name = "";
-    private boolean init = false;
     private int numthreads = Runtime.getRuntime().availableProcessors();
     private static String fileSep = System.getProperty("file.separator");
-    private static String userHome = System.getProperty("user.home");
+    //private static String userHome = System.getProperty("user.home");
     private static Color lineColor;
     private static String svsFilePath;
 
@@ -113,8 +112,8 @@ public class CustomTiler {
     }
 
     private void initialize() throws DependencyException, FormatException, IOException, ServiceException {
-        ServiceFactory factory = new ServiceFactory();
-        OMEXMLService service = factory.getInstance(OMEXMLService.class);
+
+        OMEXMLService service = initOMEXMLService();
         omexml = service.createOMEXMLMetadata();
         reader = new ImageReader();
         reader.setMetadataStore(omexml);
@@ -138,7 +137,7 @@ public class CustomTiler {
         writer.setId(outputFile);
         writer.setCompression("LZW");
         System.out.println(writer.getCompression());
-        biwriter = new BufferedImageWriter(writer);
+        //biwriter = new BufferedImageWriter(writer);
         reader.setSeries(0);
         //width = reader.getSizeX();
         //height = reader.getSizeY();
@@ -492,8 +491,8 @@ public class CustomTiler {
     }
 
     public void GeneratePyramidTiles2() throws DependencyException, ServiceException, IOException {
-        ServiceFactory factory = new ServiceFactory();
-        OMEXMLService service = factory.getInstance(OMEXMLService.class);
+
+        OMEXMLService service = initOMEXMLService();
         MetadataStore outta = service.createOMEXMLMetadata();
         for (int series = 0; series < reader.getSeriesCount(); series++) {
             reader.setSeries(series);
@@ -646,7 +645,6 @@ public class CustomTiler {
                         Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
-
                     sema.acquire();
                     new PolyThread2(series, x, y).start();
                 }
@@ -692,7 +690,6 @@ public class CustomTiler {
             overlappedTiledWriter.cleanup();
         }
     }
-
 
     public class PolyThread2 extends Thread {
         int series;
@@ -741,10 +738,10 @@ public class CustomTiler {
             }
             boom.flush();
             sema.release();
+            return;
         }
 
     }
-
 
     public class PolyThread extends Thread {
         Path file;
@@ -757,18 +754,8 @@ public class CustomTiler {
             //System.out.println("executing thread..."+file);
             //int height = 0;
             //int width = 0;
-            ServiceFactory factory = null;
-            try {
-                factory = new ServiceFactory();
-            } catch (DependencyException ex) {
-                Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            OMEXMLService service = null;
-            try {
-                service = factory.getInstance(OMEXMLService.class);
-            } catch (DependencyException ex) {
-                Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            OMEXMLService service = initOMEXMLService();
+
             ImageReader oreader = new ImageReader();
             IMetadata omexml = null;
             try {
@@ -791,12 +778,21 @@ public class CustomTiler {
             int tileminy = 0;
             Reader reader = null;
             List<CSVRecord> records = null;
+            CSVParser parser = null;
             try {
                 reader = Files.newBufferedReader(file);
-                CSVParser parser = getCsvParser(reader, true);
+                parser = getCsvParser(reader, true);
                 records = parser.getRecords();
             } catch (IOException ex) {
                 error("**CSVRecord**", ex, true);
+            } finally {
+                try {
+                    if (parser != null) {
+                        parser.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             width = Integer.parseInt(records.get(0).get("image_width"));
             height = Integer.parseInt(records.get(0).get("image_height"));
@@ -815,6 +811,15 @@ public class CustomTiler {
                 Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
                 Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                // We're done with the reader. Close it.
+                try {
+                    if (oreader != null) {
+                        oreader.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             omexml.setPixelsSizeX(new PositiveInteger(tx), 0);
             omexml.setPixelsSizeY(new PositiveInteger(ty), 0);
@@ -893,7 +898,12 @@ public class CustomTiler {
             } catch (ArrayIndexOutOfBoundsException ex) {
                 error("**BOUNDS ISSUE**", ex, false);
             }
-            
+
+            sema.release();
+            boom.flush();
+            return;
+
+
             /*
             int nXTiles = width / tx;
             int nYTiles = height / ty;
@@ -941,7 +951,7 @@ public class CustomTiler {
             // } finally {
             //   sema.release();
             //}
-            sema.release();
+
         }
 
     }
@@ -966,6 +976,12 @@ public class CustomTiler {
         } catch (IOException ex) {
             error("**CSVRecord-2**", ex, false);
         }
+        finally {
+            if (reader != null)
+            {
+                reader.close();
+            }
+        }
         width = Integer.parseInt(records.get(0).get("image_width"));
         height = Integer.parseInt(records.get(0).get("image_height"));
         System.out.println(width + " " + height);
@@ -979,6 +995,7 @@ public class CustomTiler {
         } catch (FormatException | DependencyException | ServiceException ex) {
             error("**GeneratePyramidTiles**", ex, false);
         }
+        stream.close();
         double delta = (double) System.nanoTime() - start;
         delta = delta / 1000000000d;
         System.out.println("Time : " + String.valueOf(delta));
@@ -999,6 +1016,17 @@ public class CustomTiler {
             System.out.println("DIRECTORY DOES NOT EXIST: " + pathToFile);
             System.exit(1);
         }
+    }
+
+    private synchronized OMEXMLService initOMEXMLService() {
+        OMEXMLService omexmlService;
+        try {
+            final ServiceFactory serviceFactory = new ServiceFactory();
+            omexmlService = serviceFactory.getInstance(loci.formats.services.OMEXMLService.class);
+        } catch (final DependencyException exc) {
+            throw new IllegalStateException("Cannot access OME-XML service", exc);
+        }
+        return omexmlService;
     }
 
     private static CSVParser getCsvParser(Reader reader, boolean hasHeader) throws IOException {
