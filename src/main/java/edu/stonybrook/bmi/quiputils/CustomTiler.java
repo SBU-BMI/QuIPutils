@@ -401,6 +401,7 @@ public class CustomTiler {
                             p.lineTo(ia, ib);
                             g.draw(p);
                         }
+                        cursor.close();
                         if (bad) numbad++;
                         String ffn = path + fileSep + src + fileSep + src + "-" + series + "-" + x + "-" + y + ".png";
                         sema.acquire();
