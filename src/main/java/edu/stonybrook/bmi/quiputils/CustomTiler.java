@@ -1037,10 +1037,10 @@ public class CustomTiler {
         loci.common.DebugTools.setRootLevel("WARN");
 
         // NOTE: usage: CustomTiler inputDir, outputDir, svsFilePath, imgName, color [int]
-        String inputDir = null;
-        String outputDir = null;
-        String imgName = null;
-        String svsFilePath = null;
+        String inputDir;
+        String outputDir;
+        String imgName;
+        String svsFilePath;
         int color = 0; //default blue
 
         if (args.length == 0) {
