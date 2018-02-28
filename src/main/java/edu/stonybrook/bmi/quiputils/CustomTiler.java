@@ -803,7 +803,7 @@ public class CustomTiler {
             tileminx = Integer.parseInt(records.get(0).get("tile_minx"));
             tileminy = Integer.parseInt(records.get(0).get("tile_miny"));
             //System.out.println(tx+" "+ty);
-
+/*
             int tilePlaneSize = tileSizeX * tileSizeY * oreader.getRGBChannelCount() * bpp;
             byte[] buf = new byte[tilePlaneSize];
             try {
@@ -830,8 +830,8 @@ public class CustomTiler {
             } catch (FormatException ex) {
                 Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-            //BufferedImage boom = new BufferedImage(tx, ty, BufferedImage.TYPE_INT_ARGB);
+*/
+            BufferedImage boom = new BufferedImage(tx, ty, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = boom.createGraphics();
             g.setColor(new Color(255, 255, 255, 0));
             g.fillRect(0, 0, tx, ty);
