@@ -271,7 +271,7 @@ public class CustomTiler {
                     }
                     double delta = (double) System.nanoTime() - start;
                     delta = delta / 1000000000d;
-                    System.out.println("Time : " + String.valueOf(delta));
+                    System.out.println("Time : " + String.valueOf(delta) + " seconds.");
                 }
             }
         }
@@ -440,8 +440,8 @@ public class CustomTiler {
                     }     */
                         //biwriter.saveImage(image, boom, tileX, tileY, effTileSizeX, effTileSizeY);
                     }
-                    double delta = (double) System.nanoTime() - start;
-                    delta = delta / 1000000000d;
+                    //double delta = (double) System.nanoTime() - start;
+                    //delta = delta / 1000000000d;
                     //System.out.println("Time : "+String.valueOf(delta));
                     //System.out.println("maxx : "+maxx+" minx : "+minx+" maxy : "+maxy+" miny : "+miny);
                     //System.out.println("number of polygons : "+numpoly+"  numbad : "+numbad+"  numgood : "+(numpoly-numbad));
@@ -997,7 +997,7 @@ public class CustomTiler {
         stream.close();
         double delta = (double) System.nanoTime() - start;
         delta = delta / 1000000000d;
-        System.out.println("Time : " + String.valueOf(delta));
+        System.out.println("Time : " + String.valueOf(delta) + " seconds.");
     }
 
     public void error(String message, Exception ex, boolean end) {
