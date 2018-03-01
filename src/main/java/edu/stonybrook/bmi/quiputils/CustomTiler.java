@@ -16,8 +16,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
@@ -59,6 +58,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.bson.Document;
+import java.awt.BasicStroke;
 
 public class CustomTiler {
 
@@ -86,6 +86,7 @@ public class CustomTiler {
     //private static String userHome = System.getProperty("user.home");
     private static Color lineColor;
     private static String svsFilePath;
+    private static Stroke stroke = new BasicStroke(2);
 
     public CustomTiler(String src, String dest, String name, int tileSizeX, int tileSizeY) {
         this.dest = dest;
@@ -341,6 +342,7 @@ public class CustomTiler {
 
                         BufferedImage boom = new BufferedImage(effTileSizeX, effTileSizeY, BufferedImage.TYPE_INT_ARGB);
                         Graphics2D g = boom.createGraphics();
+                        g.setStroke(stroke);
                         g.setColor(new Color(255, 255, 255, 0));
                         g.fillRect(0, 0, effTileSizeX, effTileSizeY);
                         g.setColor(lineColor);
@@ -606,6 +608,7 @@ public class CustomTiler {
             //System.out.println(file.toString()+" "+tx+" "+ty);
             BufferedImage boom = new BufferedImage(tx, ty, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = boom.createGraphics();
+            g.setStroke(stroke);
             g.setColor(new Color(255, 255, 255, 0));
             //g.setColor(new Color(255,83,21,255));
             g.fillRect(0, 0, tx, ty);
@@ -833,6 +836,7 @@ public class CustomTiler {
 */
             BufferedImage boom = new BufferedImage(tx, ty, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = boom.createGraphics();
+            g.setStroke(stroke);
             g.setColor(new Color(255, 255, 255, 0));
             g.fillRect(0, 0, tx, ty);
             g.setColor(lineColor);
