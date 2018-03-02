@@ -1090,6 +1090,11 @@ public class CustomTiler {
 
         }
 
+        System.out.println(imgName);
+        System.out.println(color);
+        System.out.println("line stroke 2");
+
+
         testPath(inputDir);
         testPath(outputDir);
 
