@@ -993,12 +993,14 @@ public class CustomTiler {
             sema.acquire();
             new PolyThread(p).start();
         }
+        stream.close();
+        
         try {
             GeneratePyramidTiles3();
         } catch (FormatException | DependencyException | ServiceException ex) {
             error("**GeneratePyramidTiles**", ex, false);
         }
-        stream.close();
+        
         double delta = (double) System.nanoTime() - start;
         delta = delta / 1000000000d;
         System.out.println("Time : " + String.valueOf(delta) + " seconds.");
