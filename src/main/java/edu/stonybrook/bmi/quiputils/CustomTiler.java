@@ -758,7 +758,7 @@ public class CustomTiler {
             //System.out.println("executing thread..."+file);
             //int height = 0;
             //int width = 0;
-            OMEXMLService service = initOMEXMLService();
+            //OMEXMLService service = initOMEXMLService();
 
             //ImageReader oreader = new ImageReader();
             //IMetadata omexml = null;
