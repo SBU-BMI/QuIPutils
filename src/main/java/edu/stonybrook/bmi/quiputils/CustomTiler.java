@@ -160,7 +160,7 @@ public class CustomTiler {
                 if (nXTiles * tileSizeX != width) nXTiles++;
                 if (nYTiles * tileSizeY != height) nYTiles++;
                 for (int y = 0; y < nYTiles; y++) {
-                    //System.out.println(y);
+                    System.out.println(y);
                     for (int x = 0; x < nXTiles; x++) {
                         //System.out.println(x+" : "+y);
                         int tileX = x * tileSizeX;
