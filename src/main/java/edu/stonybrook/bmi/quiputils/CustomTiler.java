@@ -760,22 +760,22 @@ public class CustomTiler {
             //int width = 0;
             OMEXMLService service = initOMEXMLService();
 
-            ImageReader oreader = new ImageReader();
-            IMetadata omexml = null;
-            try {
-                omexml = service.createOMEXMLMetadata();
-            } catch (ServiceException ex) {
-                Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            oreader.setMetadataStore(omexml);
-            try {
-                oreader.setId(getSvsFilePath());
-            } catch (FormatException ex) {
-                Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            int bpp = FormatTools.getBytesPerPixel(oreader.getPixelType());
+            //ImageReader oreader = new ImageReader();
+            //IMetadata omexml = null;
+            //try {
+//                omexml = service.createOMEXMLMetadata();
+//            } catch (ServiceException ex) {
+//                Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//            oreader.setMetadataStore(omexml);
+//            try {
+//                oreader.setId(getSvsFilePath());
+//            } catch (FormatException ex) {
+//                Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
+//            } catch (IOException ex) {
+//                Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+  //          int bpp = FormatTools.getBytesPerPixel(oreader.getPixelType());
             int tx = 0;
             int ty = 0;
             int tileminx = 0;
@@ -1076,7 +1076,7 @@ public class CustomTiler {
 
         if (args.length == 0) {
             // Hard-code it here, if you must...
-            inputDir = "D:\\tiles\\csv2\\";
+            inputDir = "D:\\tiles\\csv3\\";
             outputDir = "D:\\tiles\\";
             svsFilePath = "D:\\tiles\\raw\\TCGA-44-A47B-01Z-00-DX1.177D0531-E037-435B-BFD4-382B2150B10D.svs";
             imgName = "TCGA-44-A47B-01Z-00-DX1.177D0531-E037-435B-BFD4-382B2150B10D";
