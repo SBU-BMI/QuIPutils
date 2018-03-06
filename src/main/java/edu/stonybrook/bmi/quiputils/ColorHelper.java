@@ -33,55 +33,55 @@ public class ColorHelper {
         switch (num) {
             case 1:
                 // light blue, #a6cee3
-                rtnColor = new Color(166, 206, 227, 255);
+                rtnColor = new Color(166, 206, 227);
                 break;
             case 2:
                 // strong blue, #1f78b4
-                rtnColor = new Color(31, 120, 180, 255);
+                rtnColor = new Color(31, 120, 180);
                 break;
             case 3:
                 // light green, #b2df8a
-                rtnColor = new Color(178, 223, 138, 255);
+                rtnColor = new Color(178, 223, 138);
                 break;
             case 4:
                 // green, #33a02c
-                rtnColor = new Color(51, 160, 44, 255);
+                rtnColor = new Color(51, 160, 44);
                 break;
             case 5:
                 // pink, #fb9a99
-                rtnColor = new Color(251, 154, 153, 255);
+                rtnColor = new Color(251, 154, 153);
                 break;
             case 6:
                 // red, #e31a1c
-                rtnColor = new Color(227, 26, 28, 255);
+                rtnColor = new Color(227, 26, 28);
                 break;
             case 7:
                 // light orange, #fdbf6f
-                rtnColor = new Color(253, 191, 111, 255);
+                rtnColor = new Color(253, 191, 111);
                 break;
             case 8:
                 // orange, #ff7f00
-                rtnColor = new Color(255, 127, 0, 255);
+                rtnColor = new Color(255, 127, 0);
                 break;
             case 9:
                 // light violet, #cab2d6
-                rtnColor = new Color(202, 178, 214, 255);
+                rtnColor = new Color(202, 178, 214);
                 break;
             case 10:
                 // violet, #6a3d9a
-                rtnColor = new Color(106, 61, 154, 255);
+                rtnColor = new Color(106, 61, 154);
                 break;
             case 11:
                 // light yellow, #ffff99
-                rtnColor = new Color(255, 255, 153, 255);
+                rtnColor = new Color(255, 255, 153);
                 break;
             case 12:
                 // sienna, #b15928
-                rtnColor = new Color(177, 89, 40, 255);
+                rtnColor = new Color(177, 89, 40);
                 break;
             default:
                 // blue
-                rtnColor = new Color(0, 0, 255, 255);
+                rtnColor = new Color(0, 0, 255);
         }
         return rtnColor;
 
@@ -97,9 +97,7 @@ public class ColorHelper {
         Random rn = new Random();
         int num = rn.nextInt(numAvailColors) + 1;
 
-        Color rtnColor = getColor(num);
-
-        return rtnColor;
+        return getColor(num);
 
     }
 
