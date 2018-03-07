@@ -86,7 +86,7 @@ public class CustomTiler {
     //private static String userHome = System.getProperty("user.home");
     private static Color lineColor;
     private static String svsFilePath;
-    private static Stroke stroke = new BasicStroke(2);
+    private static Stroke stroke = new BasicStroke(3.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 1.0f);
 
     public CustomTiler(String src, String dest, String name, int tileSizeX, int tileSizeY) {
         this.dest = dest;
@@ -204,7 +204,7 @@ public class CustomTiler {
                     g.setColor(new Color(255,255,255,0));
                     g.fillRect(0, 0, effTileSizeX, effTileSizeY);
                     g.setColor(new Color(0,0,255,255));
-                    Path2D p;
+                    Path2D path;
                     while(cursor.hasNext()) {
                         //System.out.println("=========================================");
                         Document d = (Document) cursor.next();
@@ -218,8 +218,8 @@ public class CustomTiler {
                         double idb = (double) initpair.get(1);
                         int ia = (int) ((ida-startx)*reader.getSizeX());
                         int ib = (int) ((idb-starty)*reader.getSizeY());
-                        p = new Path2D.Double();
-                        p.moveTo(ia,ib);
+                        path = new Path2D.Double();
+                        path.moveTo(ia,ib);
                         for (int c=0; c<sub.size();c++) {
                             ArrayList pair = (ArrayList) sub.get(c);
                             //System.out.println(">> "+pair.get(0));
@@ -229,8 +229,8 @@ public class CustomTiler {
                             int a = (int) ((da-startx)*reader.getSizeX());
                             int b = (int) ((db-starty)*reader.getSizeY());
                             //System.out.println("coord : ["+a+","+b+"]");
-                            p.lineTo(a,b);
-                            g.draw(p);
+                            path.lineTo(a,b);
+                            g.draw(path);
                         }
                     }
                     */
@@ -342,7 +342,7 @@ public class CustomTiler {
 
                         BufferedImage boom = new BufferedImage(effTileSizeX, effTileSizeY, BufferedImage.TYPE_INT_ARGB);
                         Graphics2D g = boom.createGraphics();
-                        g.setStroke(stroke);
+                        //g.setStroke(stroke);
                         g.setColor(new Color(255, 255, 255, 0));
                         g.fillRect(0, 0, effTileSizeX, effTileSizeY);
                         g.setColor(lineColor);
@@ -608,7 +608,7 @@ public class CustomTiler {
             //System.out.println(file.toString()+" "+tx+" "+ty);
             BufferedImage boom = new BufferedImage(tx, ty, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = boom.createGraphics();
-            g.setStroke(stroke);
+            //g.setStroke(stroke);
             g.setColor(new Color(255, 255, 255, 0));
             //g.setColor(new Color(255,83,21,255));
             g.fillRect(0, 0, tx, ty);
@@ -836,15 +836,11 @@ public class CustomTiler {
 */
             BufferedImage boom = new BufferedImage(tx, ty, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = boom.createGraphics();
-            g.setStroke(stroke);
             g.setColor(new Color(255, 255, 255, 0));
             g.fillRect(0, 0, tx, ty);
             g.setColor(lineColor);
-            Path2D p = new Path2D.Double();
-            // Either way - setPaint or setColor works.
-            g.setColor(lineColor);
-            //g.setPaint(lineColor);
-            g.setStroke(new BasicStroke(2.0f)); //TODO: FIX!
+            //Path2D path = new Path2D.Double();
+            g.setStroke(stroke);
 
             String polys = file.toString();
             polys = polys.substring(0, polys.length() - 12) + "-features.csv";
@@ -870,16 +866,22 @@ public class CustomTiler {
                         int fib = (int) Math.round(Float.parseFloat(coords[1]));
                         int ia = fia - tileminx;
                         int ib = fib - tileminy;
-                        p.moveTo(ia, ib);
+                        int lastx = ia;
+                        int lasty = ib;
+                        //path.moveTo(ia, ib);
                         for (int c = 0; c < coords.length; c = c + 2) {
                             int fa = (int) Math.round(Float.parseFloat(coords[c]));
                             int fb = (int) Math.round(Float.parseFloat(coords[c + 1]));
                             int a = fa - tileminx;
                             int b = fb - tileminy;
-                            p.lineTo(a, b);
+                            g.drawLine(a, b, lastx, lasty);
+                            lastx = a;
+                            lasty = b;
+                            //path.lineTo(a, b);
                         }
-                        p.lineTo(ia, ib);
-                        g.draw(p);
+                        //path.lineTo(ia, ib);
+                        g.drawLine(ia, ib, lastx, lasty);
+                        //g.draw(path);
                     }
                     for (int i = 0; i < tx; i = i + 256)
                         for (int j = 0; j < ty; j = j + 256) {
@@ -931,11 +933,11 @@ public class CustomTiler {
                         double idb = (double) initpair.get(1);
                         int ia = (int) ((ida-startx)*reader.getSizeX());
                         int ib = (int) ((idb-starty)*reader.getSizeY());
-                        p = new Path2D.Double();
-                        p.moveTo(ia,ib);
+                        path = new Path2D.Double();
+                        path.moveTo(ia,ib);
 
-                        p.lineTo(ia,ib);
-                        g.draw(p);
+                        path.lineTo(ia,ib);
+                        g.draw(path);
                     }
                     String ffn = path+fileSep+src+fileSep+src+"-0-"+x+"-"+y+".png";
                     sema.acquire();
