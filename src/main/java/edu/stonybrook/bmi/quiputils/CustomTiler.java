@@ -841,7 +841,11 @@ public class CustomTiler {
             g.fillRect(0, 0, tx, ty);
             g.setColor(lineColor);
             Path2D p = new Path2D.Double();
+            // Either way - setPaint or setColor works.
             g.setColor(lineColor);
+            //g.setPaint(lineColor);
+            g.setStroke(new BasicStroke(2.0f)); //TODO: FIX!
+
             String polys = file.toString();
             polys = polys.substring(0, polys.length() - 12) + "-features.csv";
             Reader reader2;
