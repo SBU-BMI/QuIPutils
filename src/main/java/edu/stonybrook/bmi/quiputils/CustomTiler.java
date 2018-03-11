@@ -737,7 +737,7 @@ public class CustomTiler {
             }
             try {
                 ImageIO.write(scale(boom, 0.5), "png", newfile);
-            } catch (IOException ex) {
+            } catch (IOException | java.lang.IllegalArgumentException ex) {
                 Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
             }
             boom.flush();
