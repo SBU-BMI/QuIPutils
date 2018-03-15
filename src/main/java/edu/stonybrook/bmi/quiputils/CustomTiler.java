@@ -58,6 +58,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.bson.Document;
+
 import java.awt.BasicStroke;
 
 public class CustomTiler {
@@ -738,7 +739,9 @@ public class CustomTiler {
             try {
                 ImageIO.write(scale(boom, 0.5), "png", newfile);
             } catch (IOException | java.lang.IllegalArgumentException ex) {
-                Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
+                System.err.println(ex.toString());
+                System.err.println(dest + fileSep + name + "-" + series + "-" + x + "-" + y + ".png");
+                System.err.println(boom.getWidth() + ", " + boom.getHeight());
             }
             boom.flush();
             sema.release();
@@ -775,7 +778,7 @@ public class CustomTiler {
 //            } catch (IOException ex) {
 //                Logger.getLogger(CustomTiler.class.getName()).log(Level.SEVERE, null, ex);
 //            }
-  //          int bpp = FormatTools.getBytesPerPixel(oreader.getPixelType());
+//            int bpp = FormatTools.getBytesPerPixel(oreader.getPixelType());
             int tx = 0;
             int ty = 0;
             int tileminx = 0;
@@ -1000,13 +1003,13 @@ public class CustomTiler {
             new PolyThread(p).start();
         }
         stream.close();
-        
+
         try {
             GeneratePyramidTiles3();
         } catch (FormatException | DependencyException | ServiceException ex) {
             error("**GeneratePyramidTiles**", ex, false);
         }
-        
+
         double delta = (double) System.nanoTime() - start;
         delta = delta / 1000000000d;
         System.out.println("Time : " + String.valueOf(delta) + " seconds.");
