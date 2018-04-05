@@ -87,7 +87,7 @@ public class CustomTiler {
     //private static String userHome = System.getProperty("user.home");
     private static Color lineColor;
     private static String svsFilePath;
-    private static Stroke stroke = new BasicStroke(3.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 1.0f);
+    private static Stroke stroke = new BasicStroke(2.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 1.0f);
 
     public CustomTiler(String src, String dest, String name, int tileSizeX, int tileSizeY) {
         this.dest = dest;
