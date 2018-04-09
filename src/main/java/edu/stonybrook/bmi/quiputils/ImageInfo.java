@@ -27,8 +27,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
  * @author Erich Bremer
  */
 public class ImageInfo {
-    
-    
+        
     public static void main(String[] args) throws DependencyException, ServiceException, FormatException, IOException, Exception {
         loci.common.DebugTools.setRootLevel("WARN");
         ImageReader reader = new ImageReader();
@@ -57,12 +56,4 @@ public class ImageInfo {
         System.out.println(res);
         httpClient.stop();
     }
-
 }
-        //ServiceFactory factory = new ServiceFactory();
-        //OMEXMLService service = factory.getInstance(OMEXMLService.class);
-        //IMetadata omexml = service.createOMEXMLMetadata();
-
-        //ImageReader reader2 = new ImageReader();
-        //reader.setMetadataStore(omexml);
-        //reader.setId("d:\\validate\\17039889.svs");

@@ -19,7 +19,7 @@
         <dependency>
             <groupId>com.twelvemonkeys.imageio</groupId>
             <artifactId>imageio-tiff</artifactId>
-            <version>3.3.2</version> <!-- Alternatively, build your own version -->
+            <version>3.3.2</version>
         </dependency>
         <dependency>
             <groupId>ome</groupId>
@@ -30,17 +30,17 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-client</artifactId>
-            <version>9.4.7.v20170914</version>
+            <version>9.4.9.v20180320</version>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver</artifactId>
-            <version>3.4.2</version>
+            <version>3.6.3</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.json</artifactId>
-            <version>1.1</version>
+            <version>1.1.2</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/junit/junit -->
         <dependency>
@@ -61,7 +61,7 @@
                     <shadedArtifactAttached>false</shadedArtifactAttached>
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>com.ebremer.sl.SLServer</mainClass>
+                            <mainClass>edu.stonybrook.bmi.quiputils.ImageInfo2</mainClass>
                         </transformer>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer" />
