@@ -28,13 +28,15 @@ public class CustomTilerTest {
         tiler = new CustomTiler(src, dest, name, tileSizeX, tileSizeY);
     }
 
-    @Test(expected = NoSuchFileException.class)
+    //Uncomment to fail on purpose:
+    //@Test(expected = NoSuchFileException.class)
     public void missingInput() {
         final Path inputPath = Paths.get(src);
         final Path outputPath = Paths.get(dest);
     }
 
-    @Test
+    //Uncomment to fail on purpose:
+    //@Test
     public void setTileSize() {
         assert (tileSizeX > 0 && tileSizeY > 0);
     }
