@@ -1,6 +1,6 @@
 To create docker image:
 
-docker -t quip_overlays .
+docker build -t quip_overlays .
 
 To start docker container: 
 
