@@ -29,7 +29,7 @@ After starting the container,
 docker exec quip-overlays run_overlays.sh <segmentation-results-folder> <starting-color>  <subfolders [0/1]>
 
 <subfolders> value should be set to 1, if the segmentation-results-folder contains multiple analysis 
-result sets in subfolders. Otherwise it shoulld be set to 0.  For example, TCGA-50-111 contains two 
+result sets in subfolders. Otherwise it should be set to 0.  For example, TCGA-50-111 contains two 
 sets of results: TCGA-50-111/alg1 TCGA-50-111/alg2
 
 docker exec quip-overlays run_overlays.sh TCGA-50-111 1 1 
