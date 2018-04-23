@@ -10,7 +10,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath edu.stonybrook.bmi.quiputils.ImageInfo2 c:\data\TCGA-02-0001-01C-01-BS1.0cc8ca55-d024-440c-a4f0-01cf5b3af861.svs</exec.args>
+                <exec.args>-classpath %classpath edu.stonybrook.bmi.quiputils.ImageInfo2 d:\tkurc\TCGA-06-0148-01Z-00-DX5.a79e0d64-0318-4976-8b53-6d08b621b31b.svs</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
@@ -24,7 +24,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath edu.stonybrook.bmi.quiputils.ImageInfo2 c:\data\TCGA-02-0001-01C-01-BS1.0cc8ca55-d024-440c-a4f0-01cf5b3af861.svs</exec.args>
+                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath edu.stonybrook.bmi.quiputils.ImageInfo2 d:\tkurc\TCGA-06-0148-01Z-00-DX5.a79e0d64-0318-4976-8b53-6d08b621b31b.svs</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
             </properties>
@@ -39,7 +39,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath edu.stonybrook.bmi.quiputils.ImageInfo2 c:\data\TCGA-02-0001-01C-01-BS1.0cc8ca55-d024-440c-a4f0-01cf5b3af861.svs</exec.args>
+                <exec.args>-classpath %classpath edu.stonybrook.bmi.quiputils.ImageInfo2 d:\tkurc\TCGA-06-0148-01Z-00-DX5.a79e0d64-0318-4976-8b53-6d08b621b31b.svs</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
