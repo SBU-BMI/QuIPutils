@@ -69,6 +69,7 @@ def set_metadata(mdata,tile_folder):
     provdoc["algorithm_params"] = mdata
     provdoc["randval"] = random.random()
     provdoc["submit_date"] = datetime.datetime.utcnow()
+    mdoc["provenance"] = provdoc
     mdoc["tile-location"] = tile_folder
     return mdoc
 
@@ -117,7 +118,7 @@ if __name__ == "__main__":
        query["image.subject_id"] = subject_id
        query["provenance.analysis_execution_id"] = analysis_id
        qres = db.metadata.find_one(query)
-       if qres == None:
+       if qres is None:
           db.metadata.insert_one(provdoc)
        else:
           db.metadata.update_one({'_id': qres['_id']}, {'$set': {'tile-location': provdoc["tile-location"]}}, upsert=False) 
