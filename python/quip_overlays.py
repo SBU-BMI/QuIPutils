@@ -98,7 +98,7 @@ if __name__ == "__main__":
        analysis_id = mdata["analysis_id"]
        
        folder_extension = str(uuid.uuid5(uuid.NAMESPACE_X500,str(analysis_id)))
-       out_folder = root_out_folder + "/" + subject_id + "/" + case_id + "." + folder_extension
+       out_folder = root_out_folder + "/" + subject_id + "_" + case_id + "." + folder_extension
        if not os.path.exists(out_folder):
           os.makedirs(out_folder)
 
