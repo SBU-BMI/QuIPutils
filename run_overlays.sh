@@ -5,6 +5,6 @@ if [ "$#" -ne 3 ]; then
   exit 1;
 fi
 
-python /home/QuIPutils/python/quip_overlays.py --quip /data/results/$1 --images /data/images --overlays /data/overlays --color $2 --subfolders $3
+python /home/QuIPutils/python/quip_overlays.py --quip /data/results/$1 --images /data/images --overlays /data/images/overlays --color $2 --subfolders $3
 
 exit 0;

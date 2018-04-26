@@ -71,6 +71,7 @@ def set_metadata(mdata,tile_folder):
     provdoc["submit_date"] = datetime.datetime.utcnow()
     mdoc["provenance"] = provdoc
     mdoc["tile-location"] = tile_folder
+    mdoc["tile_name"] = mdata["case_id"]
     return mdoc
 
 def get_input_file(mdata,images_folder):
