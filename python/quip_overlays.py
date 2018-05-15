@@ -69,7 +69,9 @@ def set_metadata(mdata,tile_folder):
     provdoc["algorithm_params"] = mdata
     provdoc["randval"] = random.random()
     provdoc["submit_date"] = datetime.datetime.utcnow()
+    mdoc["provenance"] = provdoc
     mdoc["tile-location"] = tile_folder
+    mdoc["tile_name"] = mdata["case_id"]
     return mdoc
 
 def get_input_file(mdata,images_folder):
@@ -96,7 +98,7 @@ if __name__ == "__main__":
        analysis_id = mdata["analysis_id"]
        
        folder_extension = str(uuid.uuid5(uuid.NAMESPACE_X500,str(analysis_id)))
-       out_folder = root_out_folder + "/" + subject_id + "/" + case_id + "." + folder_extension
+       out_folder = root_out_folder + "/" + subject_id + "_" + case_id + "." + folder_extension
        if not os.path.exists(out_folder):
           os.makedirs(out_folder)
 
@@ -117,7 +119,7 @@ if __name__ == "__main__":
        query["image.subject_id"] = subject_id
        query["provenance.analysis_execution_id"] = analysis_id
        qres = db.metadata.find_one(query)
-       if qres == None:
+       if qres is None:
           db.metadata.insert_one(provdoc)
        else:
           db.metadata.update_one({'_id': qres['_id']}, {'$set': {'tile-location': provdoc["tile-location"]}}, upsert=False) 
