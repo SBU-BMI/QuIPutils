@@ -1,4 +1,4 @@
-tiler_cmd: "java -cp /home/QuIPutils//target/QuIPutils-1.0-SNAPSHOT.jar edu.stonybrook.bmi.quiputils.CustomTiler"
+tiler_cmd: "java -cp /home/QuIPutils/target/QuIPutils-1.0-SNAPSHOT.jar edu.stonybrook.bmi.quiputils.CustomTiler"
 dbhost: "quip-data"
 dbport: 27017 
 dbname: "quip"
