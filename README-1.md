@@ -35,7 +35,7 @@ To run overlay generation:
 
 After starting the container: 
 
-```
+```bash
 docker exec quip-overlays run_overlays.sh <segmentation-results-folder> <starting-color> <subfolders [0/1]>
 ```
 
