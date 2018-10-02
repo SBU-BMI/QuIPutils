@@ -1,7 +1,3 @@
-/*
- * Software by Tammy DiPrima
- * ALL RIGHTS RESERVED
- */
 package edu.stonybrook.bmi.quiputils;
 
 import java.awt.Color;
